@@ -1,0 +1,36 @@
+import {useRef} from 'react';
+import {useFrame} from '@react-three/fiber';
+import {easing} from 'maath';
+import * as THREE from 'three';
+
+const HeroCamera = ({isMobile, children}) => {
+    const group = useRef();
+    const mouse = useRef(new THREE.Vector2());
+    const target = useRef(new THREE.Vector3(0, 0, 0));
+    useFrame((state, delta) => {
+        easing.damp3(state.camera.position, [0, 0, 20], 0.25, delta);
+
+        if (!isMobile) {
+            // Calculate camera position based on mouse movement
+            const radius = 20; // Distance from the target
+            const angleX = mouse.current.x * Math.PI; // Horizontal rotation
+            const angleY = mouse.current.y * Math.PI * 0.25; // Vertical rotation (limited to avoid flipping)
+
+            const cameraPosition = new THREE.Vector3(
+                Math.sin(angleX) * Math.cos(angleY) * radius,
+                Math.sin(angleY) * radius,
+                Math.cos(angleX) * Math.cos(angleY) * radius
+            );
+
+            // Smoothly interpolate the camera position
+            easing.damp3(state.camera.position, cameraPosition.toArray(), 0.25, delta);
+
+            // Make the camera look at the target point
+            state.camera.lookAt(target.current);
+        }
+    });
+
+    return <group ref={group}>{children}</group>;
+};
+
+export default HeroCamera;
