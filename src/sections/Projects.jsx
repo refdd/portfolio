@@ -54,7 +54,7 @@ const Projects = () => {
             style={currentProject.logoStyle}
           >
             <img
-              className="w-10 h-10 shadow-sm"
+              className="w-10 h-10 object-contain shadow-sm"
               src={currentProject.logo}
               alt="logo"
             />
